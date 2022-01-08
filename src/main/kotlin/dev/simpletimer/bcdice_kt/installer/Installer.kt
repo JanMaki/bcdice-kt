@@ -9,6 +9,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import java.io.*
+import java.net.URI
 import java.net.URL
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
@@ -73,8 +74,8 @@ class Installer {
         val bcdiceDirectory = installBCDice(BCDice.directory, cacheDirectory)
 
         //動作に必要なGemをインストール
-        val gemsDirectory = installGems(BCDice.directory, cacheDirectory, File(bcdiceDirectory, "Gemfile"))
-        installGems(BCDice.directory, cacheDirectory, File(javaClass.classLoader.getResource("Gemfile")!!.file))
+        val gemsDirectory = installGems(BCDice.directory, cacheDirectory, File(bcdiceDirectory, "Gemfile").toURI())
+        installGems(BCDice.directory, cacheDirectory, javaClass.classLoader.getResource("Gemfile")?.toURI()!!)
 
         //Rubyの実行に必要なヘッダーを生成
         BCDice.generateHeader(bcdiceDirectory, gemsDirectory)
@@ -155,11 +156,12 @@ class Installer {
      * @param gemFile BCDiceのディレクトリ
      * @return インストール結果のディレクトリ
      */
-    private fun installGems(directory: File, cacheDirectory: File, gemFile: File): File {
+    private fun installGems(directory: File, cacheDirectory: File, gemFile: URI): File {
         //Gemfileを読み込む
         val gems = HashMap<String, String>()
         //ファイル読み込み
-        BufferedReader(FileReader(gemFile)).use { bufferReader ->
+        val gemFileStream = gemFile.toURL().openStream()
+        gemFileStream.bufferedReader().use { bufferReader ->
             //行のデータ
             var line: String?
             while (bufferReader.readLine().also { line = it } != null) {
@@ -193,6 +195,7 @@ class Installer {
                 }
             }
         }
+        gemFileStream.close()
 
         //gemをインストール
         //gemが収められるディレクトリ
@@ -271,7 +274,7 @@ class Installer {
 
                 //Gemfileだった場合はインストールを実行
                 if (entryFile.name.equals("Gemfile", ignoreCase = true)) {
-                    installGems(directory, cacheDirectory, entryFile)
+                    installGems(directory, cacheDirectory, entryFile.toURI())
                 }
             }
             gzipTarInputStream.close()
