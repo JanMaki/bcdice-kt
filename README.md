@@ -2,6 +2,32 @@
 
 [BCDice]( https://github.com/bcdice/BCDice )をKotlinやJavaなどで使うためのライブラリ
 
+## Gradle・Maven
+### Gradle
+```gradle
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.JanMaki:bcdice-kt:VERSION'
+}
+```
+### Maven
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependency>
+    <groupId>com.github.JanMaki</groupId>
+    <artifactId>bcdice-kt</artifactId>
+    <version>VERSION</version>
+</dependency>
+```
 
 ## インストールと下準備
 
