@@ -3,6 +3,7 @@
 [BCDice]( https://github.com/bcdice/BCDice )をKotlinやJavaなどで使うためのライブラリ
 
 ## Gradle・Maven
+[![](https://jitpack.io/v/dev.simpletimer/bcdice-kt.svg)](https://jitpack.io/#dev.simpletimer/bcdice-kt)
 ### Gradle
 ```gradle
 repositories {
@@ -10,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.JanMaki:bcdice-kt:VERSION'
+    implementation 'dev.simpletimer:bcdice-kt:VERSION'
 }
 ```
 ### Maven
@@ -23,7 +24,7 @@ dependencies {
 </repositories>
 
 <dependency>
-    <groupId>com.github.JanMaki</groupId>
+    <groupId>dev.simpletimer</groupId>
     <artifactId>bcdice-kt</artifactId>
     <version>VERSION</version>
 </dependency>
