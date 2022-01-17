@@ -17,9 +17,6 @@ public class JavaRollTest {
 
         //ゲームシステムを取得
         GameSystem gameSystem = bcdice.getGameSystem("Cthulhu7th");
-        if (gameSystem == null) {
-            return;
-        }
 
         Result result = gameSystem.roll("CC+1");
         System.out.println(result.getText()); //結果のテキスト

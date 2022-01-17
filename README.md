@@ -50,7 +50,7 @@ bcdice.setup()
 ### Java
 
 ```java
-BCDice bcdice=new BCDice();
+BCDice bcdice = new BCDice();
 
 //動作に必要なファイルがインストールされているかを確認
 if(!bcdice.wasInstalled()){
@@ -73,7 +73,7 @@ bcdice.setup();
 
 
 //ゲームシステムを取得
-val gameSystem = bcdice.getGameSystem("Cthulhu7th") ?: return
+val gameSystem = bcdice.getGameSystem("Cthulhu7th")
 
 val result = gameSystem.roll("CC+1")
 println(result.text) //結果のテキスト
@@ -89,9 +89,6 @@ println(result.text) //結果のテキスト
 
 //ゲームシステムを取得
 GameSystem gameSystem=bcdice.getGameSystem("Cthulhu7th");
-if(gameSystem==null){
-    return;
-}
 
 GameSystem.DiceResult result=gameSystem.roll("CC+1");
 System.out.println(result.getText()); //結果のテキスト

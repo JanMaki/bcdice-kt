@@ -13,7 +13,7 @@ fun main() {
     bcdice.setup()
 
     //ゲームシステムを取得
-    val gameSystem = bcdice.getGameSystem("Cthulhu7th") ?: return
+    val gameSystem = bcdice.getGameSystem("Cthulhu7th")
 
     val result = gameSystem.roll("CC+1")
     println(result.text) //結果のテキスト
