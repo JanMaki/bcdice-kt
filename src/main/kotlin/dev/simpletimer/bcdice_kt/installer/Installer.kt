@@ -41,14 +41,15 @@ class Installer {
             //行のデータ
             var line: String?
             while (bufferReader.readLine().also { line = it } != null) {
-                val text = line?.replace(" ", "") ?: continue
+                val text = line ?: continue
                 //BCDiceの行かを確認
                 if (text.startsWith("BCDice")) {
-                    bcdiceDirectory = File(text.split(":")[1])
+                    bcdiceDirectory = File(text.split(": ")[1])
+                    println(bcdiceDirectory)
                 }
                 //Gemの行かを確認
                 if (text.startsWith("Gems")) {
-                    gemsDirectory = File(text.split(":")[1])
+                    gemsDirectory = File(text.split(": ")[1])
                 }
             }
         }
