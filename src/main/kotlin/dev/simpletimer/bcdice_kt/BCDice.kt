@@ -133,8 +133,12 @@ $buffer
      * @param id ゲームシステムのID
      * @return ゲームシステム
      */
-    fun getGameSystem(id: String): GameSystem? {
-        return gameSystems?.first { it.id == id }
+    fun getGameSystem(id: String): GameSystem {
+        val gameSystem = gameSystems?.filter { it.id == id }
+        if (gameSystem == null || gameSystem.isEmpty()){
+            throw IllegalArgumentException("無効なゲームシステムのIDです: $id")
+        }
+        return gameSystem.first()
     }
 
     /**

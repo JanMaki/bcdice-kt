@@ -1,6 +1,7 @@
 package dev.simpletimer.bcdice_kt.bcdice_task
 
 import dev.simpletimer.bcdice_kt.BCDice
+import org.jruby.Ruby
 import org.jruby.RubyArray
 import org.jruby.RubyHash
 import org.jruby.RubyStruct
@@ -27,12 +28,18 @@ TEXT
             
 result = BCDice::UserDefinedDiceTable.new(text).roll()
 
+if result.nil?
+{
+
+}
+else
 {
 text: result.text,
 rands: result.rands
 }
+end
             """
-        )
+        )?: RubyHash(Ruby.newInstance())
 
         //データを整形
         val data = (result as RubyHash).toMap().map { it.key.toString() to it.value }.toMap()

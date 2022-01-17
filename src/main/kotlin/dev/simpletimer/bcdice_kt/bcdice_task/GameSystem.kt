@@ -1,9 +1,7 @@
 package dev.simpletimer.bcdice_kt.bcdice_task
 
 import dev.simpletimer.bcdice_kt.BCDice
-import org.jruby.RubyArray
-import org.jruby.RubyHash
-import org.jruby.RubyStruct
+import org.jruby.*
 
 /**
  * ゲームシステムを読み込み、ロールをする
@@ -34,15 +32,20 @@ require "bcdice"
 require "bcdice/game_system"
 
 game_system = BCDice.game_system_class('${id}')
-            
+
+if game_system.nil?
+{
+}
+else
 {
 name: game_system::NAME,
 sort_key: game_system::SORT_KEY,
 command_pattern: game_system.command_pattern.source,
 help_message: game_system::HELP_MESSAGE
 }
+end
         """
-        )
+        )?: throw RuntimeException("ゲームシステムのロードに失敗しました: $id")
         //データを整形
         val data = (result as RubyHash).toMap().values.filterIsInstance<String>()
         //各データを代入していく
@@ -71,19 +74,22 @@ require "bcdice/game_system"
 game_system = BCDice.game_system_class('${id}')
 dice_result = game_system.eval('${command}')
                
-                
+if dice_result.nil?
+{
+}
+else
 {
 text: dice_result.text,
 secret: dice_result.secret?,
 success: dice_result.success?,
 failure: dice_result.failure?,
 critical: dice_result.critical?,
- fumble: dice_result.fumble?,
+fumble: dice_result.fumble?,
 rands: dice_result.detailed_rands
 }
+end
             """
-            )
-            //データを整形
+            )?: RubyHash(Ruby.newInstance())
             val data = (result as RubyHash).toMap().map { it.key.toString() to it.value }.toMap()
             //データがからの時
             if (data.isEmpty()) {
