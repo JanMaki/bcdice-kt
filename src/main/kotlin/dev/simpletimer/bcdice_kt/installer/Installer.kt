@@ -45,7 +45,6 @@ class Installer {
                 //BCDiceの行かを確認
                 if (text.startsWith("BCDice")) {
                     bcdiceDirectory = File(text.split(": ")[1])
-                    println(bcdiceDirectory)
                 }
                 //Gemの行かを確認
                 if (text.startsWith("Gems")) {
