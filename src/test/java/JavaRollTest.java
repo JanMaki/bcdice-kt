@@ -1,6 +1,6 @@
 import dev.simpletimer.bcdice_kt.BCDice;
 import dev.simpletimer.bcdice_kt.bcdice_task.GameSystem;
-import dev.simpletimer.bcdice_kt.bcdice_task.Result;
+import dev.simpletimer.bcdice_kt.bcdice_task.result.Result;
 
 public class JavaRollTest {
     public static void main(String[] args) {

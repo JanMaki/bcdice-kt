@@ -1,6 +1,8 @@
 package dev.simpletimer.bcdice_kt.bcdice_task
 
 import dev.simpletimer.bcdice_kt.BCDice
+import dev.simpletimer.bcdice_kt.bcdice_task.result.Rand
+import dev.simpletimer.bcdice_kt.bcdice_task.result.Result
 import org.jruby.Ruby
 import org.jruby.RubyArray
 import org.jruby.RubyHash

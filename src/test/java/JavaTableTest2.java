@@ -1,6 +1,6 @@
 import dev.simpletimer.bcdice_kt.BCDice;
 import dev.simpletimer.bcdice_kt.bcdice_task.OriginalTable;
-import dev.simpletimer.bcdice_kt.bcdice_task.Result;
+import dev.simpletimer.bcdice_kt.bcdice_task.result.Result;
 
 import java.util.Map;
 

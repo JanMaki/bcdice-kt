@@ -4,7 +4,7 @@ import dev.simpletimer.bcdice_kt.installer.Installer
 import dev.simpletimer.bcdice_kt.bcdice_task.GameSystem
 import dev.simpletimer.bcdice_kt.bcdice_task.GameSystems
 import dev.simpletimer.bcdice_kt.bcdice_task.OriginalTable
-import dev.simpletimer.bcdice_kt.bcdice_task.Result
+import dev.simpletimer.bcdice_kt.bcdice_task.result.Result
 import org.jruby.embed.jsr223.JRubyEngine
 import java.io.*
 import java.net.URL
@@ -148,7 +148,7 @@ $buffer
      * @param text 表のテキスト
      * @return 結果
      */
-    fun rollOriginalTable(text: String): Result{
+    fun rollOriginalTable(text: String): Result {
         return OriginalTable(text).roll()
     }
 

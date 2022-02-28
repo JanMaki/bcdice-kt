@@ -1,4 +1,4 @@
-package dev.simpletimer.bcdice_kt.bcdice_task
+package dev.simpletimer.bcdice_kt.bcdice_task.result
 
 /**
  * ダイス目の詳細
