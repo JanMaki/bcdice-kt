@@ -90,7 +90,7 @@ println(result.text) //結果のテキスト
 //ゲームシステムを取得
 GameSystem gameSystem=bcdice.getGameSystem("Cthulhu7th");
 
-GameSystem.DiceResult result=gameSystem.roll("CC+1");
+GameSystem.DiceResult result = gameSystem.roll("CC+1");
 System.out.println(result.getText()); //結果のテキスト
 ```
 
