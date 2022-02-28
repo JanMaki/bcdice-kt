@@ -88,7 +88,7 @@ println(result.text) //結果のテキスト
 
 
 //ゲームシステムを取得
-GameSystem gameSystem=bcdice.getGameSystem("Cthulhu7th");
+GameSystem gameSystem = bcdice.getGameSystem("Cthulhu7th");
 
 GameSystem.DiceResult result = gameSystem.roll("CC+1");
 System.out.println(result.getText()); //結果のテキスト
@@ -190,3 +190,9 @@ OriginalTable.TableData tableData = new OriginalTable.TableData(
 Result result = bcdice.rollOriginalTable(tableData);
 System.out.println(result.getText()); //結果のテキスト
 ```
+
+## 使用プロジェクト
+### SimpleTimer
+マーダーミステリーのDiscord卓用タイマー。<br>
+v2以降、ダイス機能の実装に使用されている。<br>
+https://source.simpletimer.dev/
