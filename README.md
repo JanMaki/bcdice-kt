@@ -30,6 +30,9 @@ dependencies {
 </dependency>
 ```
 
+## ドキュメント（KDoc）
+### https://doc.bcdice-kt.simpletimer.dev/
+
 ## 実行時の下準備
 
 ### Kotlin
