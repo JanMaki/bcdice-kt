@@ -5,6 +5,7 @@ plugins {
     kotlin("plugin.serialization") version "1.5.30"
     id("com.github.johnrengelman.shadow") version "5.2.0"
     id("maven-publish")
+    id("org.jetbrains.dokka") version "1.6.10"
 }
 
 group = "dev.simpletimer.bcdice_kt"
@@ -27,6 +28,9 @@ dependencies {
     implementation("com.github.kittinunf.fuel", "fuel", "2.3.1")
     //圧縮の解凍
     implementation("org.apache.commons","commons-compress","1.20")
+
+    //KDOCの生成
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.10")
 }
 
 val jar by tasks.getting(Jar::class) {

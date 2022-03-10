@@ -8,6 +8,11 @@ import org.jruby.RubyArray
 import org.jruby.RubyHash
 import org.jruby.RubyStruct
 
+/**
+ * テーブルを作成し、テーブルのダイスロールを行う
+ *
+ * @property tableText テーブルの内容のテキスト
+ */
 class OriginalTable(private val tableText: String) {
     constructor(tableData: TableData) : this(tableData.toString())
 
@@ -85,6 +90,13 @@ end
         }
     }
 
+    /**
+     * テーブルのデータ
+     *
+     * @property tableName テーブル名
+     * @property dice ロールするダイスの内容の文字列
+     * @property table テーブルの内容
+     */
     data class TableData(
         val tableName: String,
         val dice: String,

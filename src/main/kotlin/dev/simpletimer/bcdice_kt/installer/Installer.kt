@@ -16,7 +16,11 @@ import java.nio.channels.ReadableByteChannel
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-
+/**
+ * BCDiceのインストーラー
+ * インストールの確認なども行う
+ *
+ */
 class Installer {
     //バイトのサイズ
     private val byteSize = ByteArray(1024)

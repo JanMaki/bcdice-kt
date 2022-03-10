@@ -11,18 +11,30 @@ import java.net.URL
 import java.nio.file.Paths
 import javax.script.ScriptEngineManager
 
+/**
+ * BCDiceを扱うためのすべての起点
+ *
+ */
 class BCDice {
     companion object {
-        //BCDiceのURL
+        /**
+         * BCDiceのURL
+         */
         val bcdiceURL = URL("https://github.com/bcdice/BCDice/archive/refs/tags/v3.5.0.zip")
 
-        //Rubyを動かすエンジン
+        /**
+         * Rubyを動かすエンジン
+         */
         val jRubyEngine: JRubyEngine = ScriptEngineManager().getEngineByName("ruby") as JRubyEngine
 
-        //実行ファイルのディレクトリ
+        /**
+         * 実行ファイルのディレクトリ
+         */
         lateinit var directory: File
 
-        //Rubyを実行する際の共通のヘッダー
+        /**
+         * Rubyを実行する際の共通のヘッダー
+         */
         var header = ""
 
         /**
@@ -57,10 +69,14 @@ $buffer
         }
     }
 
-    //インストーラー
+    /**
+     * インストーラー
+     */
     private val installer: Installer
 
-    //ゲームシステムの一覧
+    /**
+     * ゲームシステムの一覧
+     */
     private var gameSystems: GameSystems? = null
 
     init {
