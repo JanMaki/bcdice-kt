@@ -16,7 +16,7 @@ fun main() {
     //テーブルのデータをTableDataとして作成
     val tableData = OriginalTable.TableData(
         "飲み物表",
-        "1dD6",
+        "1D6",
         mapOf(
             1 to "水",
             2 to "緑茶",
