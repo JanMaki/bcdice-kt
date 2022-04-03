@@ -11,10 +11,10 @@ import org.jruby.RubyStruct
 /**
  * テーブルを作成し、テーブルのダイスロールを行う
  *
- * @property tableText テーブルの内容のテキスト
+ * @property tableData 表のデータ
  */
-class OriginalTable(private val tableText: String) {
-    constructor(tableData: TableData) : this(tableData.toString())
+class OriginalTable(private val tableData: TableData) {
+    constructor(tableText: String) : this(TableData.valueOf(tableText))
 
     /**
      * テーブルのダイスロールを行う
@@ -22,6 +22,8 @@ class OriginalTable(private val tableText: String) {
      * @return 結果
      */
     fun roll(): Result {
+        println(tableData.toString())
+        println("a")
         val result = BCDice.jRubyEngine.eval(
             """
 ${BCDice.header}
@@ -30,7 +32,7 @@ require "bcdice"
 require "bcdice/user_defined_dice_table"
             
 text = <<~TEXT
-$tableText
+$tableData
 TEXT
             
 result = BCDice::UserDefinedDiceTable.new(text).roll()
@@ -102,6 +104,23 @@ end
         val dice: String,
         val table: Map<Int, String>
     ) {
+        companion object {
+            /**
+             * テーブルの内容のテキストから[TableData]に変換する
+             *
+             * @param text テーブルの内容のテキスト
+             * @return [TableData]
+             */
+            fun valueOf(text: String): TableData {
+                val rows = text.split("\n")
+                println(rows)
+                return TableData(
+                    rows[0],
+                    rows[1],
+                    rows.subList(2, rows.size).map { it.split(":") }.associate { Pair(it[0].toInt(), it[1]) })
+            }
+        }
+
         override fun toString(): String {
             return "$tableName\n$dice\n${table.entries.joinToString("\n") { "${it.key}:${it.value}" }}"
         }
