@@ -113,7 +113,6 @@ end
              */
             fun valueOf(text: String): TableData {
                 val rows = text.split("\n")
-                println(rows)
                 return TableData(
                     rows[0],
                     rows[1],
