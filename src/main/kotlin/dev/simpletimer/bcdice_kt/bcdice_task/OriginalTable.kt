@@ -110,7 +110,7 @@ end
              * @return [TableData]
              */
             fun valueOf(text: String): TableData {
-                val rows = text.split("\n")
+                val rows = text.split("\n").filter { it != "" }
                 return TableData(
                     rows[0],
                     rows[1],
