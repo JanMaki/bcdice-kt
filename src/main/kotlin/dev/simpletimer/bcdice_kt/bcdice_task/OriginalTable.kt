@@ -22,8 +22,6 @@ class OriginalTable(private val tableData: TableData) {
      * @return 結果
      */
     fun roll(): Result {
-        println(tableData.toString())
-        println("a")
         val result = BCDice.jRubyEngine.eval(
             """
 ${BCDice.header}
@@ -113,7 +111,6 @@ end
              */
             fun valueOf(text: String): TableData {
                 val rows = text.split("\n")
-                println(rows)
                 return TableData(
                     rows[0],
                     rows[1],
