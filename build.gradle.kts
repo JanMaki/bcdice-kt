@@ -2,14 +2,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.5.30"
-    kotlin("plugin.serialization") version "1.5.30"
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    kotlin("plugin.serialization") version "1.6.10"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("maven-publish")
     id("org.jetbrains.dokka") version "1.6.10"
 }
 
 group = "dev.simpletimer.bcdice_kt"
-version = "alpha-2"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -17,11 +17,8 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib", org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION))
-    implementation("org.jetbrains.kotlin", "kotlin-stdlib", "1.5.31")
-
     //Rubyのエンジン
-    implementation("org.jruby", "jruby-complete", "9.3.2.0")
+    implementation("org.jruby", "jruby-complete", "9.3.4.0")
     //Jsonの解析
     implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.3.2")
     //HTTP
@@ -30,7 +27,7 @@ dependencies {
     implementation("org.apache.commons","commons-compress","1.20")
 
     //KDOCの生成
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.10")
+    dokkaHtmlPlugin("org.jetbrains.dokka", "kotlin-as-java-plugin", "1.6.10")
 }
 
 val jar by tasks.getting(Jar::class) {
