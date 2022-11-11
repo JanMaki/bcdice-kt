@@ -120,7 +120,13 @@ $buffer
      *
      */
     fun install() {
-        installer.install()
+        try {
+            //インストール
+            installer.install()
+        }catch (e: IOException) {
+            //もう一度ためしてみる
+            installer.install()
+        }
     }
 
     /**
