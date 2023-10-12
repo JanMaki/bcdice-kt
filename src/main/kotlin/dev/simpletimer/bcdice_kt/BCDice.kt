@@ -157,7 +157,7 @@ $buffer
      */
     fun getGameSystem(id: String): GameSystem {
         val gameSystem = gameSystems?.filter { it.id == id }
-        if (gameSystem == null || gameSystem.isEmpty()){
+        if (gameSystem.isNullOrEmpty()){
             throw IllegalArgumentException("無効なゲームシステムのIDです: $id")
         }
         return gameSystem.first()
