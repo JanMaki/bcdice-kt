@@ -20,7 +20,7 @@ class BCDice {
         /**
          * BCDiceのURL
          */
-        val bcdiceURL = URL("https://github.com/bcdice/BCDice/archive/refs/tags/v3.10.0.zip")
+        val bcdiceURL = URL("https://github.com/bcdice/BCDice/archive/refs/tags/v3.11.0.zip")
 
         /**
          * Rubyを動かすエンジン
