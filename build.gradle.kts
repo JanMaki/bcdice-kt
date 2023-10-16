@@ -5,7 +5,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("maven-publish")
-    id("org.jetbrains.dokka") version "1.6.10"
+    id("org.jetbrains.dokka") version "1.9.10"
 }
 
 group = "dev.simpletimer.bcdice_kt"
