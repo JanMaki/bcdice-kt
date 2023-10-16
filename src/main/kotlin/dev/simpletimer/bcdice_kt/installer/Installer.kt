@@ -12,7 +12,6 @@ import java.io.*
 import java.net.URI
 import java.net.URL
 import java.nio.channels.Channels
-import java.nio.channels.ReadableByteChannel
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -107,47 +106,50 @@ class Installer {
      * @return インストール結果のディレクトリ
      */
     private fun installBCDice(directory: File, cacheDirectory: File): File {
-        //BCDiceをダウンロード
-        val readableByteChannel: ReadableByteChannel = Channels.newChannel(BCDice.bcdiceURL.openStream())
         val bcdiceZip = File(cacheDirectory, "bcdice.zip")
-        FileOutputStream(bcdiceZip).use {
-            it.channel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE)
+        //BCDiceをダウンロード
+        BCDice.bcdiceURL.openStream().use {
+            Channels.newChannel(it).use { readableByteChannel ->
+                FileOutputStream(bcdiceZip).use { fileOutputStream ->
+                    fileOutputStream.channel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE)
+                }
+            }
         }
 
         //BCDiceを解凍
-        val zipInputStream = ZipInputStream(FileInputStream(bcdiceZip))
-        var zipEntry: ZipEntry?
-        var bcdiceDirectory: File? = null
-        while (zipInputStream.nextEntry.also { zipEntry = it } != null) {
-            //nullチェック
-            val entryData = zipEntry ?: continue
-            //作成されるファイル
-            val entryFile = File(directory, entryData.name)
-            //ディレクトリかどうかを確認
-            if (entryData.isDirectory) {
-                //ディレクトリを作成
-                entryFile.mkdir()
-                if (bcdiceDirectory == null) {
-                    bcdiceDirectory = entryFile
+        return FileInputStream(bcdiceZip).use {
+            ZipInputStream(it).use { zipInputStream ->
+                var zipEntry: ZipEntry?
+                var bcdiceDirectory: File? = null
+                while (zipInputStream.nextEntry.also { zipEntry = it } != null) {
+                    //nullチェック
+                    val entryData = zipEntry ?: continue
+                    //作成されるファイル
+                    val entryFile = File(directory, entryData.name)
+                    //ディレクトリかどうかを確認
+                    if (entryData.isDirectory) {
+                        //ディレクトリを作成
+                        entryFile.mkdir()
+                        if (bcdiceDirectory == null) {
+                            bcdiceDirectory = entryFile
+                        }
+                    } else {
+                        //ファイルをコピー
+                        FileOutputStream(entryFile).use { fileOutputStream ->
+                            BufferedOutputStream(fileOutputStream).use { bufferOutputStream ->
+                                var length: Int
+                                while (zipInputStream.read(byteSize).also { length = it } != -1) {
+                                    bufferOutputStream.write(byteSize, 0, length)
+                                }
+                            }
+                        }
+                    }
                 }
-            } else {
-                //ファイルをコピー
-                val bufferOutputStream = BufferedOutputStream(FileOutputStream(entryFile))
-                var length: Int
-                while (zipInputStream.read(byteSize).also { length = it } != -1) {
-                    bufferOutputStream.write(byteSize, 0, length)
-                }
-                bufferOutputStream.close()
+
+                //ディレクトリを返す
+                bcdiceDirectory
             }
-        }
-        zipInputStream.close()
-
-        //インストールの確認
-        if (bcdiceDirectory == null) {
-            throw RuntimeException("BCDiceのインストールに失敗しました")
-        }
-
-        return bcdiceDirectory
+        } ?: throw RuntimeException("BCDiceのインストールに失敗しました")
     }
 
     private val json = Json { ignoreUnknownKeys = true }
@@ -164,42 +166,42 @@ class Installer {
         //Gemfileを読み込む
         val gems = HashMap<String, String>()
         //ファイル読み込み
-        val gemFileStream = gemFile.toURL().openStream()
-        gemFileStream.bufferedReader().use { bufferReader ->
-            //行のデータ
-            var line: String?
-            while (bufferReader.readLine().also { line = it } != null) {
-                //nullチェク
-                var text = line ?: continue
-                //gemの行かを確認
-                if (text.indexOf("  gem") != 0) {
-                    continue
-                }
-                //不要な部分を削除
-                text = text.replace("gem ", "")
-                    .replace("\"", "")
-                    .replace("~>", "")
-                    .replace(" ", "")
-                    .replace("\'", "")
-                //カンマで分ける
-                val splittedText = text.split(",")
-                if (File(cacheDirectory, splittedText[0]).exists()) {
-                    //すでにインストール済みならスキップ
-                    continue
-                }
-                //バージョンの表記があるかを確認
-                if (splittedText.size < 2 || !Regex("[0-9]+\\.[0-9]+\\.[0-9]+").matches(splittedText[1])) {
-                    val response = "https://rubygems.org/api/v1/gems/${splittedText[0]}.json".httpGet().response()
-                    gems[splittedText[0]] = json.decodeFromString(
-                        GemVersion.serializer(),
-                        String(response.second.data)
-                    ).version
-                } else {
-                    gems[splittedText[0]] = splittedText[1]
+        gemFile.toURL().openStream().use { gemFileStream ->
+            gemFileStream.bufferedReader().use { bufferReader ->
+                //行のデータ
+                var line: String?
+                while (bufferReader.readLine().also { line = it } != null) {
+                    //nullチェク
+                    var text = line ?: continue
+                    //gemの行かを確認
+                    if (text.indexOf("  gem") != 0) {
+                        continue
+                    }
+                    //不要な部分を削除
+                    text = text.replace("gem ", "")
+                        .replace("\"", "")
+                        .replace("~>", "")
+                        .replace(" ", "")
+                        .replace("\'", "")
+                    //カンマで分ける
+                    val splittedText = text.split(",")
+                    if (File(cacheDirectory, splittedText[0]).exists()) {
+                        //すでにインストール済みならスキップ
+                        continue
+                    }
+                    //バージョンの表記があるかを確認
+                    if (splittedText.size < 2 || !Regex("[0-9]+\\.[0-9]+\\.[0-9]+").matches(splittedText[1])) {
+                        val response = "https://rubygems.org/api/v1/gems/${splittedText[0]}.json".httpGet().response()
+                        gems[splittedText[0]] = json.decodeFromString(
+                            GemVersion.serializer(),
+                            String(response.second.data)
+                        ).version
+                    } else {
+                        gems[splittedText[0]] = splittedText[1]
+                    }
                 }
             }
         }
-        gemFileStream.close()
 
         //gemをインストール
         //gemが収められるディレクトリ
@@ -211,78 +213,91 @@ class Installer {
             //ダウンロードurlを生成
             val url = URL("https://rubygems.org/downloads/${name}-${version}.gem")
             //ダウンロード
-            val gemReadChannel = Channels.newChannel(url.openStream())
-            val gemCacheFile = File(cacheDirectory, "${name}.gem")
-            FileOutputStream(gemCacheFile).use {
-                it.channel.transferFrom(gemReadChannel, 0, Long.MAX_VALUE)
-            }
-
-            //.gemの解凍(tar形式)
-            //結果を出力するディレクトリ
-            val gemCacheDirectory = File(cacheDirectory, name)
-            gemCacheDirectory.mkdir()
-            val tarInputStream = TarArchiveInputStream(FileInputStream(gemCacheFile))
-            var tarEntry: ArchiveEntry?
-            while (tarInputStream.nextEntry.also { tarEntry = it } != null) {
-                //nullチェック
-                val entryData = tarEntry ?: continue
-                //作成されるファイル
-                val entryFile = File(gemCacheDirectory, entryData.name)
-                //ディレクトリかどうかを確認
-                if (entryData.isDirectory) {
-                    //ディレクトリを作成
-                    entryFile.mkdir()
-                } else {
-                    //ファイルをコピー
-                    val bufferOutputStream = BufferedOutputStream(FileOutputStream(entryFile))
-                    var length: Int
-                    while (tarInputStream.read(byteSize).also { length = it } != -1) {
-                        bufferOutputStream.write(byteSize, 0, length)
+            val gemCacheDirectory = url.openStream().use {
+                Channels.newChannel(it).use { gemReadChannel ->
+                    val gemCacheFile = File(cacheDirectory, "${name}.gem")
+                    FileOutputStream(gemCacheFile).use { fileOutputStream ->
+                        fileOutputStream.channel.transferFrom(gemReadChannel, 0, Long.MAX_VALUE)
                     }
-                    bufferOutputStream.close()
+
+                    //.gemの解凍(tar形式)
+                    //結果を出力するディレクトリ
+                    val gemCacheDirectory = File(cacheDirectory, name)
+                    gemCacheDirectory.mkdir()
+                    FileInputStream(gemCacheFile).use { fileInputStream ->
+                        TarArchiveInputStream(fileInputStream).use { tarInputStream ->
+                            var tarEntry: ArchiveEntry?
+                            while (tarInputStream.nextEntry.also { tarEntry = it } != null) {
+                                //nullチェック
+                                val entryData = tarEntry ?: continue
+                                //作成されるファイル
+                                val entryFile = File(gemCacheDirectory, entryData.name)
+                                //ディレクトリかどうかを確認
+                                if (entryData.isDirectory) {
+                                    //ディレクトリを作成
+                                    entryFile.mkdir()
+                                } else {
+                                    //ファイルをコピー
+                                    FileOutputStream(entryFile).use { fileOutputStream ->
+                                        BufferedOutputStream(fileOutputStream).use { bufferOutputStream ->
+                                            var length: Int
+                                            while (tarInputStream.read(byteSize).also { length = it } != -1) {
+                                                bufferOutputStream.write(byteSize, 0, length)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    gemCacheDirectory
                 }
             }
-            tarInputStream.close()
 
             //data.tar.gzを解凍(gzip形式)
             //結果を出力するディレクトリ
             val gemDirectory = File(gemsDirectory, name)
             gemDirectory.mkdir()
-            val gzipInputStream = GzipCompressorInputStream(FileInputStream(File(gemCacheDirectory, "data.tar.gz")))
-            val gzipTarInputStream = TarArchiveInputStream(gzipInputStream)
-            var gzipTarEntry: ArchiveEntry?
-            while (gzipTarInputStream.nextEntry.also { gzipTarEntry = it } != null) {
-                //nullチェック
-                val entryData = gzipTarEntry ?: continue
-                //作成されるファイル
-                val entryFile = File(gemDirectory, entryData.name)
-                //親ディレクトリを取得
-                val parentFile = entryFile.parentFile
-                //親ディレクトリがなかったら作成する
-                if (!parentFile.exists()) {
-                    parentFile.mkdirs()
-                }
-                //ディレクトリかどうかを確認
-                if (entryData.isDirectory) {
-                    //ディレクトリを作成
-                    entryFile.mkdir()
-                } else {
-                    //ファイルをコピー
-                    val bufferOutputStream = BufferedOutputStream(FileOutputStream(entryFile))
-                    var length: Int
-                    while (gzipTarInputStream.read(byteSize).also { length = it } != -1) {
-                        bufferOutputStream.write(byteSize, 0, length)
-                    }
-                    bufferOutputStream.close()
-                }
+            FileInputStream(File(gemCacheDirectory, "data.tar.gz")).use {
+                GzipCompressorInputStream(it).use { gzipInputStream ->
+                    TarArchiveInputStream(gzipInputStream).use { gzipTarInputStream ->
+                        var gzipTarEntry: ArchiveEntry?
+                        while (gzipTarInputStream.nextEntry.also { gzipTarEntry = it } != null) {
+                            //nullチェック
+                            val entryData = gzipTarEntry ?: continue
+                            //作成されるファイル
+                            val entryFile = File(gemDirectory, entryData.name)
+                            //親ディレクトリを取得
+                            val parentFile = entryFile.parentFile
+                            //親ディレクトリがなかったら作成する
+                            if (!parentFile.exists()) {
+                                parentFile.mkdirs()
+                            }
+                            //ディレクトリかどうかを確認
+                            if (entryData.isDirectory) {
+                                //ディレクトリを作成
+                                entryFile.mkdir()
+                            } else {
+                                //ファイルをコピー
+                                FileOutputStream(entryFile).use { fileOutputStream ->
+                                    BufferedOutputStream(fileOutputStream).use { bufferOutputStream ->
+                                        var length: Int
+                                        while (gzipTarInputStream.read(byteSize).also { length = it } != -1) {
+                                            bufferOutputStream.write(byteSize, 0, length)
+                                        }
+                                    }
+                                }
+                            }
 
-                //Gemfileだった場合はインストールを実行
-                if (entryFile.name.equals("Gemfile", ignoreCase = true)) {
-                    installGems(directory, cacheDirectory, entryFile.toURI())
+                            //Gemfileだった場合はインストールを実行
+                            if (entryFile.name.equals("Gemfile", ignoreCase = true)) {
+                                installGems(directory, cacheDirectory, entryFile.toURI())
+                            }
+                        }
+                    }
                 }
             }
-            gzipTarInputStream.close()
-            gzipInputStream.close()
         }
         return gemsDirectory
     }
