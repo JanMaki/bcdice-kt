@@ -28,6 +28,8 @@ dependencies {
 
     //KDOCの生成
     dokkaHtmlPlugin("org.jetbrains.dokka", "kotlin-as-java-plugin", "1.6.10")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
 val jar by tasks.getting(Jar::class) {
@@ -58,5 +60,9 @@ afterEvaluate {
             }
         }
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
